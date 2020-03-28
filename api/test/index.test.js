@@ -380,8 +380,8 @@ const testAuthUser = (model) => {
         .expect(401, HttpStatus.getStatusText(401))
     })
 
-    test('return 200 status with ' + model.name.toLowerCase() + ' name and token', async () => {
-      await request(server)
+    test('return 200 status with ' + model.name.toLowerCase() + ' name and token', async (done) => {
+      request(server)
         .post('/' + Config.settings.version + '/' + model.name + '/sign-in')
         .send({
           email: Data[model.name].create.email,
@@ -391,7 +391,8 @@ const testAuthUser = (model) => {
         .then(response => {
           expect(response.body.name).toEqual(Data[model.name].create.name)
           expect(response.body.token).not.toEqual('')
-          expect(response.body.token).not.toEqual(token)
+
+          done()
         })
     })
   })
