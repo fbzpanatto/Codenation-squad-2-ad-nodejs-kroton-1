@@ -32,7 +32,7 @@ class Config {
   }
 
   get serverHost() {
-    this.settings.server.host + (this.settings.server.host.includes('localhost') ? ':' + this.settings.server.port : '')
+    return this.settings.server.host + (this.settings.server.host.includes('localhost') ? ':' + this.settings.server.port : '')
   }
 
   get serverFullHost() {
