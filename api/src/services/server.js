@@ -68,7 +68,7 @@ class Server {
 
           this.server = expressServer.listen(Config.settings.server.port, () => {
             if (!testMode) {
-              console.info('Server listening at %s', Config.serverHost)
+              console.info('Server listening at %s', Config.serverFullHost)
             }
 
             resolve(this.server)

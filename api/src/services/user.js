@@ -18,7 +18,7 @@ class UserService extends Service {
               response.status(201).json({ id: user.id, token })
 
               if (Config.isDefaultEnvironment || Config.isTestCoverage) {
-                const confirmUrl = Config.serverHost + '/' + Config.settings.version + '/' + this.model.name + '/sign-up/' + token
+                const confirmUrl = Config.serverFullHost + '/' + Config.settings.version + '/' + this.model.name + '/sign-up/' + token
 
                 Mailer
                   .send(user.email,
@@ -41,7 +41,7 @@ class UserService extends Service {
       .findOne({ where: { email: request.params.email, active: false } })
       .then(user => {
         if (user) {
-          const confirmUrl = Config.serverHost +'/' + Config.settings.version + '/' + this.model.name + '/sign-up/' + user.token
+          const confirmUrl = Config.serverFullHost +'/' + Config.settings.version + '/' + this.model.name + '/sign-up/' + user.token
 
           if (Config.isDefaultEnvironment || Config.isTestCoverage) {
             Mailer

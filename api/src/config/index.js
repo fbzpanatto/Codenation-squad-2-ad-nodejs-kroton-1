@@ -12,7 +12,7 @@ class Config {
   }
 
   get basePath() {
-    return this.serverHost + '/' + this.settings.version + '/'
+    return this.serverFullHost + '/' + this.settings.version + '/'
   }
 
   get isDefaultEnvironment() {
@@ -32,7 +32,11 @@ class Config {
   }
 
   get serverHost() {
-    return this.settings.server.protocol + '://' + this.settings.server.host + (this.settings.server.host.includes('localhost') ? ':' + this.settings.server.port : '')
+    this.settings.server.host + (this.settings.server.host.includes('localhost') ? ':' + this.settings.server.port : '')
+  }
+
+  get serverFullHost() {
+    return this.settings.server.protocol + '://' + this.serverHost
   }
 
   get guiHost() {
