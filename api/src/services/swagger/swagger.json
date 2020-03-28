@@ -283,7 +283,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "nome": {
+                                "name": {
                                     "type": "string"
                                 },
                                 "email": {
@@ -317,7 +317,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "nome": {
+                                "name": {
                                     "type": "string"
                                 },
                                 "email": {
