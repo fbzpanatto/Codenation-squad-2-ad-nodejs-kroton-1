@@ -96,10 +96,15 @@ class UserService extends Service {
         if (user && Auth.bcrypt.compareSync(request.body.password, user.password)) {
           Auth.createToken(request.body.email)
             .then(newToken => {
-              response.status(200).json({
-                name: user.name,
-                token: newToken
-              })
+              this.model
+                .updateById(user.id, { token: newToken })
+                .then(() => {
+                  response.status(200).json({
+                    name: user.name,
+                    token: newToken
+                  })
+                })
+                .catch(error => Log.send(request, response, next, error, 401))
             })
             .catch(error => Log.send(request, response, next, error, 401))
         } else {
