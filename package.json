@@ -1,0 +1,21 @@
+{
+  "name": "log-central",
+  "version": "0.0.1",
+  "main": "api/src/index.js",
+  "private": true,
+  "author": "ever@azul.dev",
+  "scripts": {
+    "install": "cd api && npm install",
+    "start": "nodemon api/src/index.js",
+    "test": "api/node_modules/.bin/jest api/test/index.test.js",
+    "coverage": "api/node_modules/.bin/jest --coverage api/test/index.test.js",
+    "populate": "NODE_ENV=populate api/node_modules/.bin/jest api/test/index.test.js",
+    "test:watch": "api/node_modules/.bin/jest api/test/index.test.js --watch"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/api/node_modules/"
+    ]
+  }
+}

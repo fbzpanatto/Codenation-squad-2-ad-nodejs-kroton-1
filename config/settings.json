@@ -1,0 +1,52 @@
+{
+  "server": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 3000
+  },
+  "gui": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 8080
+  },
+  "version": "v1",
+  "db": {
+    "host"     : "localhost",
+    "user"     : "root",
+    "password" : "1234",
+    "database" : "logcentral_#database_environment#",
+    "port"     : 3306,
+    "logging": false,
+    "dialect": "mysql",
+    "define": {
+      "underscored": true,
+      "timestamps": true,
+      "paranoid": false
+    }
+  },
+  "auth": {
+  "key": "x-auth-token",
+    "secret": "terces-secret",
+    "options": {
+      "issuer": "api.logcentral",
+      "expiresIn": "7d",
+      "algorithm": "RS512"
+    },
+    "exceptions": [ { "method": "GET", "url": "/" },
+                    { "method": "GET", "url": "/#version#" },
+                    { "method": "GET", "url": "/Swagger", "children": true },
+                    { "method": "GET", "url": "/#version#/Test", "children": true },
+                    { "method": "POST", "url": "/#version#/User/sign-up" },
+                    { "method": "GET", "url": "/#version#/User/sign-up", "children": true },
+                    { "method": "POST", "url": "/#version#/User/sign-in" },
+                    { "method": "GET", "url": "/#version#/User/password-reset", "children": true } ]
+  },
+  "mailer": {
+    "service": "gmail",
+    "from": "logcentral@azul.dev",
+    "auth": {
+      "user": "logcentral@azulinternet.com.br",
+      "pass": "x4H-2sA-gH1-cOm"
+    }
+  }
+}

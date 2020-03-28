@@ -1,0 +1,617 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "<b>API</b><br><br><a href=\"./files/database.svg\" target=\"_blank\">Modelo de dados</a><br><br><a href=\"./files/coverage/\" target=\"_blank\">Jest Coverage Report</a><br><br>",
+        "version": "0.0.1",
+        "title": "Log Central",
+        "contact": {
+            "name": "Squad #2",
+            "email": "eduardogamebooster@gmail.com, ericasugui@gmail.com, ever@azul.dev, fbzpanatto@hotmail.com"
+        }
+    },
+    "tags": [
+        {
+            "name": "LogCentral",
+            "description": "Funcionalidades da API"
+        },
+        {
+            "name": "Autenticação",
+            "description": "Cadastro e autenticação de usuário, alterações para senha e token, etc."
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/User/sign-up": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Cadastra novo usuário",
+                "description": "Cria novo usuário e envia e-mail contendo url para confirmação.",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "name",
+                                "email",
+                                "password"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Novo usuário criado",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    }
+                }
+            }
+        },
+        "/User/sign-up/resend/{email}": {
+          "get": {
+              "tags": [
+                  "Autenticação"
+              ],
+              "summary": "Reenvia e-mail para confirmação de cadastro",
+              "description": "Envia cópia do e-mail remetido ao criar o usuário.",
+              "parameters": [
+                  {
+                      "name": "email",
+                      "in": "path",
+                      "description": "E-mail do usuário",
+                      "required": true,
+                      "type": "string"
+                  }
+              ],
+              "responses": {
+                  "204": {
+                      "description": "Sem conteúdo."
+                  },
+                  "404": {
+                      "description": "E-mail não encontrado"
+                  }
+              }
+          }
+      },
+        "/User/sign-up/{token}/swagger": {
+            "get": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Confirma cadastro de novo usuário",
+                "description": "A partir do token contido na url enviada via e-mail, altera o valor de <i>user.active</i> para <i>true</i>.<br><br>Redireciona* para a url definida em <i>config.value</i> quando <i>config.id</i> igual a <i>\"loginUrl\"</i>.<br><br><i>* Apenas para testes utilizando Swagger, o redirecionamento não será efetuado</i>.",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Token do novo usuário",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirecionando para login da aplicação."
+                    },
+                    "404": {
+                        "description": "Token inválido"
+                    }
+                }
+            }
+        },
+        "/User/sign-in": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Autentica usuário",
+                "description": "Utiliza e-mail e senha para autenticação, retornando nome e token do usuário.",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "email",
+                                "password"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário autenticado",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "token": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    }
+                }
+            }
+        },
+        "/User/token": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Obtém novo token",
+                "description": "Cria novo token para o usuário autenticado.",
+                "responses": {
+                    "200": {
+                        "description": "Token atualizado",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            }
+        },
+        "/User/password-reset/{email}": {
+            "get": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Solicita alteração de senha do usuário",
+                "description": "Envia e-mail contendo url para alteração de senha.<br><br>A url é obtida em <i>config.value</i> para <i>config.id</i> igual a <i>\"passwordUrl\"</i>",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "description": "E-mail do usuário",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "E-mail enviado (contendo url para alteração de senha)"
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    },
+                    "404": {
+                      "description": "E-mail não encontrado"
+                  }
+                }
+            }
+        },
+        "/User/password": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Altera senha de usuário",
+                "description": "Atualiza senha para o usuário identificado através de token recebido no cabeçalho.<br><br>Cria novo token para o usuário.",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Nova senha para o usuário",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "password": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Senha alterada"
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            }
+        },
+        "/User/current": {
+            "get": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Obtém informações do usuário autenticado",
+                "description": "Obtém informações para o usuário identificado através de token recebido no cabeçalho.",
+                "responses": {
+                    "200": {
+                        "description": "Usuário autenticado",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "nome": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean",
+                                    "default": true
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            },
+            "patch": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Atualiza informações do usuário autenticado",
+                "description": "Atualiza informações para o usuário identificado através de token recebido no cabeçalho.",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "nome": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean",
+                                    "default": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Usuário atualizado"
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            }
+        },
+
+        "/Log": {
+            "post": {
+                "tags": [
+                    "LogCentral"
+                ],
+                "summary": "Cria novo log",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "application": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "environment": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "method": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "level": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "sourceAddress": {
+                                    "type": "string"
+                                },
+                                "datetime": {
+                                    "type": "integer"
+                                },
+                                "url": {
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "level",
+                                "environment"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Novo log criado",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            },
+            "get": {
+                "tags": [
+                    "LogCentral"
+                ],
+                "summary": "Obtém lista de logs",
+                "description": "",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "pageCount",
+                        "description": "Quantidade de registros por página/requisição",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageIndex",
+                        "description": "Página da requisição",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "environment",
+                        "description": "ID do ambiente",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "level",
+                        "description": "ID do nível/severidade",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "source",
+                        "description": "String para filtro por origem",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "message",
+                        "description": "String para filtro por mensagem",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "order",
+                        "description": "Campo(s) para ordenação",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Log"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            }
+        },
+        "/Log/{id}": {
+            "get": {
+                "tags": [
+                    "LogCentral"
+                ],
+                "summary": "Obtém log",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do log",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Log",
+                        "schema": {
+                            "$ref": "#/definitions/Log"
+                        }
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    },
+                    "404": {
+                        "description": "Log não encontrado"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            },
+            "delete": {
+                "tags": [
+                    "LogCentral"
+                ],
+                "summary": "Exclui log",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do log",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Log excluído"
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    },
+                    "404": {
+                        "description": "Log não encontrado"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            }
+        },
+        "/Log/{id}/archive": {
+            "put": {
+                "tags": [
+                    "LogCentral"
+                ],
+                "summary": "Arquiva log",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do log",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Log arquivado"
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    },
+                    "401": {
+                        "description": "Autenticação não autorizada"
+                    },
+                    "404": {
+                        "description": "Log não encontrado"
+                    }
+                },
+                "security": [ { "token": [] } ]
+            }
+        }
+    },
+    "securityDefinitions": {
+        "token": {
+            "type": "apiKey",
+            "name": "x-auth-token",
+            "in": "header"
+        }
+    }
+}
